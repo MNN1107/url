@@ -18,7 +18,10 @@ public class ShortUrlGeneratorUser {
         Optional<Long> maxIdOptional = urlRepository.getMaxId();
         long maxId = maxIdOptional.orElse(0L) + 1;
 
-//        String shortUrl = Long.toHexString(user.getId()) + Long.toHexString(maxId);
-        return shortUrl.replaceAll("^0[xX]+", "");
+        String userIdHex = Long.toHexString(user.getId());
+        String maxIdHex = Long.toHexString(maxId);
+
+        String shortUrl = userIdHex + maxIdHex;
+        return shortUrl;
     }
 }
