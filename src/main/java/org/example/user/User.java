@@ -1,20 +1,18 @@
 package org.example.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.url.Url;
 
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class User {
 
     @Id
