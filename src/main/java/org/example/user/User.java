@@ -29,4 +29,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Url> urls;
+
+    public Long getId() {
+        return id;
+    }
 }
