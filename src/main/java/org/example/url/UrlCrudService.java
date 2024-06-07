@@ -9,8 +9,13 @@ import java.util.Optional;
 
 @Service
 public interface UrlCrudService {
-    Url createShortUrl(DtoCreateUrlRequest request, User user);
-    Optional<Url> getShortUrl(String shortUrl);
-    List<Url> getUserUrls(User user);
+
+    Url createShortUrl(DtoCreateUrlRequest dtoCreateUrlRequest, User user);
+    Optional<Url> getUrlById(Long id);
+    List<Url> getAllUrls();
+    Url updateUrl(Long id, DtoCreateUrlRequest dtoCreateUrlRequest);
+    void deleteUrl(Long id);
     void incrementClickCount(String shortUrl);
+    Optional<Url> getUrlByShortUrl(String shortUrl);
+    List<Url> getUrlsByUser(User user);
 }

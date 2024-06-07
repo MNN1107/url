@@ -23,6 +23,9 @@ public class UrlCrudServiceImpl implements UrlCrudService {
     @Override
     @Transactional
     public Url createShortUrl(DtoCreateUrlRequest request, User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
         if (!URLValidator.isValid(request.getLongUrl()) || !URLValidator.isAccessibleUrl(request.getLongUrl())) {
             throw new IllegalArgumentException("Invalid or inaccessible URL");
         }
@@ -57,5 +60,52 @@ public class UrlCrudServiceImpl implements UrlCrudService {
         } else {
             throw new IllegalArgumentException("Short URL not found");
         }
+    }
+
+
+
+    private final UrlRepository urlRepository;
+    private final UrlMapper urlMapper;
+    private final ShortUrlGeneratorUser shortUrlGenerator;
+
+    @Autowired
+    public UrlCrudServiceImpl(UrlRepository urlRepository, UrlMapper urlMapper, ShortUrlGeneratorUser shortUrlGenerator) {
+        this.urlRepository = urlRepository;
+        this.urlMapper = urlMapper;
+        this.shortUrlGenerator = shortUrlGenerator;
+    }
+
+    @Override
+    public Url createUrl(DtoCreateUrlRequest request, User user) {
+        if (!URLValidator.isValid(request.getLongUrl())) {
+            throw new IllegalArgumentException("Invalid URL");
+        }
+
+        String shortUrl = shortUrlGenerator.generateShortUrl(user);
+        Url url = urlMapper.toUrl(request, user, shortUrl);
+        return urlRepository.save(url);
+    }
+
+    @Override
+    public void deleteUrl(Long id) {
+        urlRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Url> getUrlsByUser(User user) {
+        return urlRepository.findAllByUser(user);
+    }
+
+    @Override
+    public Optional<Url> getUrlByShortUrl(String shortUrl) {
+        return urlRepository.findByShortUrl(shortUrl);
+    }
+
+    @Override
+    public void incrementClickCount(String shortUrl) {
+        Url url = urlRepository.findByShortUrl(shortUrl)
+                .orElseThrow(() -> new IllegalArgumentException("Short URL not found"));
+        url.setClickCount(url.getClickCount() + 1);
+        urlRepository.save(url);
     }
 }
